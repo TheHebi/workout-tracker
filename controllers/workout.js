@@ -50,6 +50,13 @@ router.post("/workouts", async (req, res) => {
 router.get("/workouts/range", async (req, res) => {
   try {
     const workoutRange = await db.Workout.find({});
+    await workoutRange.forEach((workout) => {
+        let total = 0;
+        workout.exercises.forEach((exercise) => {
+          total += exercise.duration;
+        });
+        workout.totalDuration = total;
+      });
     res.json(workoutRange);
   } catch (err) {
     console.log(err);
