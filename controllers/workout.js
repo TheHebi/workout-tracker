@@ -5,7 +5,13 @@ const router = require("express").Router();
 router.get("/workouts", async (req, res) => {
   try {
     const workouts = await db.Workout.find({});
-    
+    await workouts.forEach((workout) => {
+      let total = 0;
+      workout.exercises.forEach((exercise) => {
+        total += exercise.duration;
+      });
+      workout.totalDuration = total;
+    });
     res.json(workouts);
   } catch (err) {
     console.log(err);
@@ -23,7 +29,7 @@ router.put("/workouts/:id", async (req, res) => {
         $push: { exercises: req.body },
       }
     );
-    res.json(newEx)
+    res.json(newEx);
   } catch (err) {
     console.log(err);
     res.json(err);
@@ -41,14 +47,14 @@ router.post("/workouts", async (req, res) => {
   }
 });
 
-router.get('/workouts/range', async (req,res)=>{
-    try{
-        const workoutRange = await db.Workout.find({})
-        res.json(workoutRange)
-    }catch(err){
-        console.log(err)
-        res.json(err)
-    }
-})
+router.get("/workouts/range", async (req, res) => {
+  try {
+    const workoutRange = await db.Workout.find({});
+    res.json(workoutRange);
+  } catch (err) {
+    console.log(err);
+    res.json(err);
+  }
+});
 
 module.exports = router;
