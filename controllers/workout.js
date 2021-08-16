@@ -5,6 +5,7 @@ const router = require("express").Router();
 router.get("/workouts", async (req, res) => {
   try {
     const workouts = await db.Workout.find({});
+    
     res.json(workouts);
   } catch (err) {
     console.log(err);
@@ -13,7 +14,7 @@ router.get("/workouts", async (req, res) => {
 });
 
 // add exercise to workout
-router.put("/api/workouts/:id", async (req, res) => {
+router.put("/workouts/:id", async (req, res) => {
   try {
     const newEx = await db.Workout.findOneAndUpdate(
       { _id: req.params.id },
@@ -30,7 +31,7 @@ router.put("/api/workouts/:id", async (req, res) => {
 });
 
 //create workout
-router.post("/api/workouts", async (req, res) => {
+router.post("/workouts", async (req, res) => {
   try {
     const newWorkout = await db.Workout.create(req.body);
     res.json(newWorkout);
@@ -39,5 +40,15 @@ router.post("/api/workouts", async (req, res) => {
     re.json(err);
   }
 });
+
+router.get('/workouts/range', async (req,res)=>{
+    try{
+        const workoutRange = await db.Workout.find({})
+        res.json(workoutRange)
+    }catch(err){
+        console.log(err)
+        res.json(err)
+    }
+})
 
 module.exports = router;
