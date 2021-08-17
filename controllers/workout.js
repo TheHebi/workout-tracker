@@ -4,14 +4,21 @@ const router = require("express").Router();
 //get all workouts
 router.get("/workouts", async (req, res) => {
   try {
-    const workouts = await db.Workout.find({});
-    await workouts.forEach((workout) => {
-      let total = 0;
-      workout.exercises.forEach((exercise) => {
-        total += exercise.duration;
-      });
-      workout.totalDuration = total;
-    });
+   const workouts = await db.Workout.aggregate([{
+      $addFields:{
+        totalDuration:{
+          $sum: `$exercises.duration`
+        }
+      }
+    }])
+    // const workouts = await db.Workout.find({});
+    // await workouts.forEach((workout) => {
+    //   let total = 0;
+    //   workout.exercises.forEach((exercise) => {
+    //     total += exercise.duration;
+    //   });
+    //   workout.totalDuration = total;
+    // });
     res.json(workouts);
   } catch (err) {
     console.log(err);
@@ -49,14 +56,21 @@ router.post("/workouts", async (req, res) => {
 
 router.get("/workouts/range", async (req, res) => {
   try {
-    const workoutRange = await db.Workout.find({});
-    await workoutRange.forEach((workout) => {
-        let total = 0;
-        workout.exercises.forEach((exercise) => {
-          total += exercise.duration;
-        });
-        workout.totalDuration = total;
-      });
+    const workoutRange = await db.Workout.aggregate([{
+      $addFields:{
+        totalDuration:{
+          $sum: `$exercises.duration`
+        }
+      }
+    }]).sort({_id:-1}).limit(7)
+    // const workoutRange = await db.Workout.find({});
+    // await workoutRange.forEach((workout) => {
+    //     let total = 0;
+    //     workout.exercises.forEach((exercise) => {
+    //       total += exercise.duration;
+    //     });
+    //     workout.totalDuration = total;
+    //   });
     res.json(workoutRange);
   } catch (err) {
     console.log(err);
